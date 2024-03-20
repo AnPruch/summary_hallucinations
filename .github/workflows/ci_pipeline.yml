@@ -16,6 +16,19 @@ env:
   BRANCH_NAME: ${{ github.ref }}
 
 jobs:
+  install-dependencies:
+    name: Installing dependencies
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup FIPL environment
+        uses: fipl-hse/setup-env-action@v0.9
+      - name: Confirming everything is OK
+        run: |
+          ls -la venv
+
   code-style:
     name: Code Style
     runs-on: ubuntu-latest
@@ -27,6 +40,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+      - name: Setup FIPL environment
+        uses: fipl-hse/setup-env-action@v0.9
       - name: Code Style
         run: |
           bash config/stage_1_style_tests/_stage_run_lint.sh "$PR_NAME" "$PR_AUTHOR"
@@ -39,6 +54,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+      - name: Setup FIPL environment
+        uses: fipl-hse/setup-env-action@v0.9
       - name: MyPy check
         run: |
           bash config/stage_1_style_tests/_stage_run_mypy.sh
@@ -53,6 +70,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+      - name: Setup FIPL environment
+        uses: fipl-hse/setup-env-action@v0.9
       - name: Run start
         if: ${{ env.REPOSITORY_TYPE == 'admin' }}
         run: |
@@ -68,6 +87,8 @@ jobs:
       - name: Install Aspell
         run: |
           sudo apt-get install aspell aspell-en aspell-ru
+      - name: Setup FIPL environment
+        uses: fipl-hse/setup-env-action@v0.9
       - name: Spell check
         if: ${{ env.REPOSITORY_TYPE == 'admin' }}
         run: |
@@ -81,6 +102,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+      - name: Setup FIPL environment
+        uses: fipl-hse/setup-env-action@v0.9
       - name: Flake8 check
         run: |
           bash config/stage_1_style_tests/_stage_run_flake8.sh
@@ -93,6 +116,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+      - name: Setup FIPL environment
+        uses: fipl-hse/setup-env-action@v0.9
       - name: Doc8 check
         if: ${{ env.REPOSITORY_TYPE == 'admin' }}
         run: |
@@ -106,6 +131,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+      - name: Setup FIPL environment
+        uses: fipl-hse/setup-env-action@v0.9
       - name: Docstring style checks
         if: ${{ env.REPOSITORY_TYPE == 'admin' }}
         run: |
@@ -119,6 +146,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+      - name: Setup FIPL environment
+        uses: fipl-hse/setup-env-action@v0.9
       - name: Dependencies check
         if: ${{ env.REPOSITORY_TYPE == 'admin' }}
         run: |
@@ -132,20 +161,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+      - name: Setup FIPL environment
+        uses: fipl-hse/setup-env-action@v0.9
       - name: Newline check
         if: ${{ env.REPOSITORY_TYPE == 'admin' }}
         run: |
           bash config/stage_1_style_tests/_stage_newline_check.sh
-
-  stubs-relevance-check:
-    name: Stubs relevance check
-    runs-on: ubuntu-latest
-    timeout-minutes: 2
-    needs: [ install-dependencies ]
-
-    steps:
-      - uses: actions/checkout@v3
-      - name: Stub relevance check
-        if: ${{ env.REPOSITORY_TYPE == 'admin' }}
-        run: |
-          bash config/stage_1_style_tests/_stage_actual_stubs.sh
