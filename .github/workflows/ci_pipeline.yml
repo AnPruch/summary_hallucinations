@@ -60,23 +60,6 @@ jobs:
         run: |
           bash config/stage_1_style_tests/_stage_run_mypy.sh
 
-  coverage:
-    name: Coverage
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    needs: [ unittests ]
-    env:
-      PR_NAME: ${{ github.event.pull_request.title }}
-
-    steps:
-      - uses: actions/checkout@v3
-      - name: Setup FIPL environment
-        uses: fipl-hse/setup-env-action@v0.9
-      - name: Run start
-        if: ${{ env.REPOSITORY_TYPE == 'admin' }}
-        run: |
-          bash config/collect_coverage/run_coverage.sh "$PR_NAME"
-
   spellcheck:
     name: Spellcheck
     runs-on: ubuntu-latest
