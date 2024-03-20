@@ -1,0 +1,6 @@
+[submodule "summedits_lib"]
+	path = summedits_lib
+	url = https://github.com/salesforce/factualNLG.git
+[submodule "tofueval_lib"]
+	path = tofueval_lib
+	url = https://github.com/amazon-science/tofueval.git

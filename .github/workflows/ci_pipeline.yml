@@ -1,0 +1,132 @@
+name: "Check PR"
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+concurrency:
+  group: ${{ github.repository }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  REPOSITORY_TYPE: public
+  GITHUB_REPOSITORY: ${{ github.repository }}
+  BRANCH_NAME: ${{ github.ref }}
+
+jobs:
+  code-style:
+    name: Code Style
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    needs: [ install-dependencies ]
+    env:
+      PR_NAME: ${{ github.event.pull_request.title }}
+      PR_AUTHOR: ${{ github.actor }}
+
+  mypy-checks:
+    name: Mypy checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    needs: [ install-dependencies ]
+
+  coverage:
+    name: Coverage
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs: [ unittests ]
+    env:
+      PR_NAME: ${{ github.event.pull_request.title }}
+
+  spellcheck:
+    name: Spellcheck
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    needs: [ install-dependencies ]
+    steps:
+      - uses: actions/checkout@master
+      - name: Install Aspell
+        run: |
+          sudo apt-get install aspell aspell-en aspell-ru
+      - name: Spell check
+        if: ${{ env.REPOSITORY_TYPE == 'admin' }}
+        run: |
+          bash config/spellcheck/_stage_spellcheck.sh
+
+  flake8-checks:
+    name: Import style checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    needs: [ install-dependencies ]
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Flake8 check
+        run: |
+          bash config/stage_1_style_tests/_stage_run_flake8.sh
+
+  docstring-style-checks:
+    name: Docstring style checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    needs: [ install-dependencies ]
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Docstring style checks
+        if: ${{ env.REPOSITORY_TYPE == 'admin' }}
+        run: |
+          bash config/stage_1_style_tests/_stage_docstring_check.sh
+
+  sphinx-build:
+    name: Sphinx build
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    needs: [ install-dependencies ]
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build Sphinx project
+        if: ${{ env.REPOSITORY_TYPE == 'admin' }}
+        run: |
+          bash config/website/_stage_run_sphinx_build.sh
+
+  requirements-check:
+    name: Requirements check
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    needs: [ install-dependencies ]
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Dependencies check
+        if: ${{ env.REPOSITORY_TYPE == 'admin' }}
+        run: |
+          bash config/stage_1_style_tests/_stage_requirements_check.sh
+
+  newline-check:
+    name: Newline check
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    needs: [ install-dependencies ]
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Newline check
+        if: ${{ env.REPOSITORY_TYPE == 'admin' }}
+        run: |
+          bash config/stage_1_style_tests/_stage_newline_check.sh
+
+  stubs-relevance-check:
+    name: Stubs relevance check
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    needs: [ install-dependencies ]
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Stub relevance check
+        if: ${{ env.REPOSITORY_TYPE == 'admin' }}
+        run: |
+          bash config/stage_1_style_tests/_stage_actual_stubs.sh
