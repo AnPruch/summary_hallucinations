@@ -1,3 +1,4 @@
+from datasets import load_dataset
 import json
 import os
 import pandas as pd
@@ -69,7 +70,14 @@ if __name__ == '__main__':
                                               '%_y': 'meeting'})
     print(percentages)
 
+    with open("tofueval_lib/document_ids_dev_test_split.json") as file:
+        document_mapping = json.load(file)
 
+    meetingbank_dev_ids = document_mapping['dev']['meetingbank']
+    meetingbank_test_ids = document_mapping['test']['meetingbank']
 
-
-
+    full_meetingbank = pd.DataFrame(load_dataset("lytang/MeetingBank-transcript")['test'])
+    meetingbank_dev = full_meetingbank[full_meetingbank.meeting_id.isin(meetingbank_dev_ids)][
+        ['meeting_id', 'source']].reset_index(drop=True).to_csv("TofuEval Files/meetingbank_dev_doc.csv", index=False)
+    meetingbank_test = full_meetingbank[full_meetingbank.meeting_id.isin(meetingbank_test_ids)][
+        ['meeting_id', 'source']].reset_index(drop=True).to_csv("TofuEval Files/meetingbank_test_doc.csv", index=False)
