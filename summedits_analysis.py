@@ -134,4 +134,3 @@ if __name__ == '__main__':
 
     for domain, edits in consistent_edits.items():
         print(domain, edits)
-
