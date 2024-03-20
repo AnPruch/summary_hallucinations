@@ -1,0 +1,35 @@
+{
+    "labs": [
+        {
+            "name": "lab_1_classify_by_unigrams",
+            "coverage": 10
+        },
+        {
+            "name": "lab_2_tokenize_by_bpe",
+            "coverage": 10
+        },
+        {
+            "name": "lab_3_generate_by_ngrams",
+            "coverage": 10
+        },
+        {
+            "name": "lab_4_fill_words_by_ngrams",
+            "coverage": 10
+        }
+    ],
+    "addons": [],
+    "repository": {
+        "admins": [
+            "artyomtugaryov",
+            "demid5111",
+            "marina-kaz",
+            "WhiteJaeger",
+            "EIzharikov",
+            "NovIrina",
+            "Vasilisa-Blyudova",
+            "vitazaytseva"
+        ],
+        "pr_name_regex": "Laboratory work #\\d, \\w+ \\w+ - 2\\dFPL\\d",
+        "pr_name_example": "Laboratory work #1, Andrei Kashchikhin - 21FPL2"
+    }
+}
